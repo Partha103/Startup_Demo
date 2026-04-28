@@ -1,0 +1,6 @@
+frontend/.next/
+.next/
+node_modules/
+target/
+.env
+.env.*
