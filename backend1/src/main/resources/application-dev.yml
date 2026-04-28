@@ -1,0 +1,13 @@
+spring:
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/tanta_store_dev}
+
+logging:
+  level:
+    com.backend1: DEBUG
+    org.springframework.security: DEBUG
+
+app:
+  cors:
+    allowed-origins: http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001

@@ -1,0 +1,16 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/tanta_store_test
+  jackson:
+    serialization:
+      indent-output: true
+
+logging:
+  level:
+    root: WARN
+    com.backend1: DEBUG
+
+app:
+  cors:
+    allowed-origins: http://localhost:8080

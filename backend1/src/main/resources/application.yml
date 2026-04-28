@@ -1,0 +1,75 @@
+spring:
+  application:
+    name: tanta-fashion-backend
+
+  server:
+    port: 8080
+    shutdown: graceful
+
+  data:
+    mongodb:
+      uri: ${MONGODB_URI:mongodb://localhost:27017/tanta_store}
+      auto-index-creation: true
+      connection-timeout: 10s
+      socket-timeout: 30s
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+      indent-output: false
+    deserialization:
+      fail-on-unknown-properties: false
+    default-property-inclusion: non_null
+
+  thymeleaf:
+    cache: true
+
+  main:
+    show-banner: false
+    lazy-initialization: false
+
+logging:
+  level:
+    root: INFO
+    com.backend1: DEBUG
+    org.springframework.web: INFO
+    org.springframework.security: WARN
+    org.springframework.data.mongodb: INFO
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/tanta-backend.log
+    max-size: 10MB
+    max-history: 30
+    total-size-cap: 1GB
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: when-authorized
+
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://127.0.0.1:3000,http://localhost:3001}
+  security:
+    jwt:
+      secret: ${JWT_SECRET:tanta-change-this-secret-in-production-min-32-chars}
+      expiration-ms: 604800000       # 7 days
+      refresh-expiration-ms: 2592000000  # 30 days
+    password:
+      min-length: 8
+  api:
+    version: v1
+    title: TANTA Fashion API
+    description: Production-grade luxury e-commerce backend
+  stripe:
+    secret-key: ${STRIPE_SECRET_KEY:sk_test_placeholder}
+    webhook-secret: ${STRIPE_WEBHOOK_SECRET:whsec_placeholder}
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}

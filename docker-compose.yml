@@ -1,0 +1,78 @@
+version: "3.9"
+
+# LUMIÈRE Full-Stack — Docker Compose
+# Usage:
+#   docker compose up              # Start all services
+#   docker compose up -d           # Detached mode
+#   docker compose logs -f backend # Tail backend logs
+#   docker compose down -v         # Tear down + remove volumes
+
+services:
+
+  # ── MongoDB ──────────────────────────────────────────────────────────────────
+  mongo:
+    image: mongo:7.0
+    container_name: lumiere_mongo
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: lumiere
+      MONGO_INITDB_ROOT_PASSWORD: lumiere_secret
+      MONGO_INITDB_DATABASE: lumiere_store
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ── Spring Boot Backend ───────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./backend1
+      dockerfile: Dockerfile
+    container_name: lumiere_backend
+    restart: unless-stopped
+    depends_on:
+      mongo:
+        condition: service_healthy
+    env_file:
+      - ./backend1/.env
+    environment:
+      MONGODB_URI: mongodb://lumiere:lumiere_secret@mongo:27017/lumiere_store?authSource=admin
+      SPRING_PROFILES_ACTIVE: prod
+      CORS_ALLOWED_ORIGINS: http://localhost:3000,http://frontend:3000
+    ports:
+      - "8080:8080"
+    volumes:
+      - backend_logs:/app/logs
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sf http://localhost:8080/actuator/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 40s
+
+  # ── Next.js Frontend ──────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lumiere_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      NEXT_PUBLIC_BACKEND_URL: http://localhost:8080
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-placeholder}
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${STRIPE_PUBLISHABLE_KEY:-pk_test_placeholder}
+    ports:
+      - "3000:3000"
+
+volumes:
+  mongo_data:
+  backend_logs:

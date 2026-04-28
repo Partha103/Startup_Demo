@@ -1,0 +1,64 @@
+# Backend Build Artifacts
+target/
+*.jar
+*.war
+
+# Maven
+*.class
+*.classpath
+.mvn/
+mvnw
+mvnw.cmd
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+*.iml
+*.iws
+*.settings
+
+# Logs
+logs/
+*.log
+log.txt
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Database
+data/
+mongodb_data/
+mongodb_config/
+
+# Docker
+.dockerignore
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Test Coverage
+coverage/
+.coverage
+htmlcov/
+
+# Dependencies
+node_modules/
+.m2/
+
+# IDE Generated Files
+*.project
+*.classpath
+.gradle/
+build/
+
+# Compiler Output
+out/
+bin/
+classes/
